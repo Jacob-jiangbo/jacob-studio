@@ -1,0 +1,5 @@
+Using command
+=============
+# ../BitBake/bin/bitbake-layers show-layers
+# ../BitBake/bin/bitbake world
+
