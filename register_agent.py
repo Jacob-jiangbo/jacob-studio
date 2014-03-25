@@ -14,7 +14,8 @@ from signal import SIGTERM
 from testlib.daemon import Daemon
 from testlib.target import Target
 
-Host1 = "ala-lpd-test1.wrs.com"
+#Host1 = "ala-lpd-test1.wrs.com"
+Host1 = "ala-tuxlab3.wrs.com"
 User1 = "jwang6"
 Passwd1 = "BAme26bo"
 Parameter1 = " -D localhost:6666 "
@@ -30,6 +31,7 @@ class RegAgentDaemon(Daemon):
 
 if __name__ == '__main__':
     daemon = RegAgentDaemon('/tmp/reg_agent_pidfile', stdout='/tmp/result')
+
     if len(sys.argv) == 2:
         if 'start' == sys.argv[1]:
             print "daemon_start"

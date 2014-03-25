@@ -1,0 +1,14 @@
+Steps
+====
+1 Copy "community version of pyCharm" on you host and untar it.
+/folk/jwang6/pycharm-community-3.0.2.tar.gz
+
+2 Copy Oracal JDK on your host and untar it.
+/folk/rwu/tmp/jdk-7u45-linux-x64.tar.gz
+
+3 Set ENV variable in you linux host.
+PYCHARM_JDK=${JDK_PATH}        <----  ${JDK_PATH} is the directory where you untar jdk-7u45-linux-x64.tar.gz.
+
+3 Start pycharm as following command
+# ${pycharm_dir}/bin/pycharm.sh   <----- ${pycharm_dir} is the directory where you untar pycharm-community-3.0.2.tar.gz.
+
