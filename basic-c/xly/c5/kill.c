@@ -1,0 +1,15 @@
+#include <stdio.h>
+#include <signal.h>
+
+int main()
+{
+	for(;;)
+	{
+		printf("«Î ‰»ÎΩ¯≥Ãpid:");
+		int pid;
+		scanf("%d", &pid);
+		kill(pid, SIGKILL);
+	}
+	return 0;
+}
+

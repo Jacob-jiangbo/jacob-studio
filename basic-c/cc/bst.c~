@@ -1,0 +1,145 @@
+/*
+树tree：一棵树可以是空树，如果非空，它应该由一个根节点和若干棵互不交叉的子树组成，每棵子树也是树。
+二叉树binary tree：一棵树，每个节点最多只能有两棵子树，这样的树叫二叉树
+二叉查找（排序）树binary search（sorted） tree：
+	在构造二叉树时，凡是比根节点小的数据都插入到左子树中，比根节点不小的数据都插入到右子树中，在子树中插入时也按照同样的规则，这样构造成的二叉树就是二叉查找（排序）树。查找时间log2(N)。
+基本操作：
+v创建create：创建一棵空二叉查找树
+v插入insert：向二叉查找树中插入一个数据
+v查找find：在二叉查找树中查找一个数据
+v删除erase：在二叉查找树中删除一个数据
+v修改update：在二叉查找树中把一个数据改成另外一个数据
+v清空clear：清空整棵二叉查找树
+v遍历travel：逐个访问二叉查找树中所有节点的数据
+v是否为空empty：
+v节点个数size：
+
+操作一棵二叉查找树的基本思路：
+	如果是空树，直接操作；
+	否则，分别处理根节点并操作左右子树。
+*/
+#include <stdio.h>
+#include <stdlib.h>
+#include <assert.h>
+#define T int
+typedef struct node{
+	T data;
+	struct node* L;
+	struct node* R;
+}node;
+#define ROOTPTR (*rootptraddr)
+#define less(a,b) ((a)<(b))
+#define equal(a,b) ((a)==(b))
+void create(node** rootptraddr){
+	ROOTPTR = NULL;
+}
+void insertnode(node** rootptraddr, node* p)
+{
+	if(ROOTPTR==NULL)
+		ROOTPTR = p;
+	else if(less(p->data,ROOTPTR->data))
+		insertnode(&ROOTPTR->L, p);
+	else
+		insertnode(&ROOTPTR->R, p);
+}
+void insertdata(node** rootptraddr, T data){
+	node* p = malloc(sizeof(node));
+	p->data = data;
+	p->L = p->R = NULL;
+	insertnode(rootptraddr, p);
+}
+int empty(node* rootptr){
+	return rootptr==NULL;
+}
+int size(node* rootptr)
+{
+	if(empty(rootptr))
+		return 0;
+	return size(rootptr->L)+size(rootptr->R)+1;
+}
+void travel(node* rootptr)
+{
+	if(rootptr==NULL) return;
+	//根左右：前序，先根
+	//左右根：后序，后根
+	//左根右：中序，中根
+	travel(rootptr->L);//左子树
+	printf("%d ", rootptr->data);//根节点
+	travel(rootptr->R);	//右子树
+}
+void clear(node** rootptraddr)
+{
+	if(ROOTPTR==NULL) return;
+	clear(&ROOTPTR->L);
+	clear(&ROOTPTR->R);
+	free(ROOTPTR);
+	ROOTPTR = NULL;
+}
+node** find(node** rootptraddr, T data)
+{
+	if(ROOTPTR==NULL) return NULL;
+	if(equal(ROOTPTR->data,data)) 
+		return rootptraddr;
+	if(less(data,ROOTPTR->data)) 
+		return find(&ROOTPTR->L,data);
+	return find(&ROOTPTR->R,data);
+}
+int erase(node** rootptraddr, T data)
+{
+	node** pp = find(rootptraddr, data);
+	if(pp==NULL) return 0;//查找失败
+	if((*pp)->L)//如果左子树非空，就把左子树根节点插入到右子树
+		insertnode(&(*pp)->R, (*pp)->L);
+	node* t = (*pp)->R;//保存合并后的右子树的地址
+	free(*pp);//释放要删除的节点
+	*pp = t;//让原始指针指向合并后的右子树
+	return 1;
+}
+int update(node** rootptraddr, T olddata, T newdata)
+{
+	
+	if(!erase(rootptraddr, olddata))
+		return 0;
+	insertdata(rootptraddr, newdata);
+	return 1;
+}
+//寻根
+T getrootdata(node* rootptr)
+{
+	assert(rootptr!=NULL);
+	return rootptr->data;
+}
+//树状打印
+void printtree(node* rootptr, int space, char c)
+{
+//	char buf[100];
+//	sprintf(buf,"%%%dc",space);
+	if(rootptr!=NULL){
+		printtree(rootptr->R,space+4,'/');
+		printf("%*c",space,c);
+		printf("%d\n", rootptr->data);
+		printtree(rootptr->L,space+4,'\\');
+	}
+}
+int main()
+{
+	node* rootptr;
+	create(&rootptr);
+	insertdata(&rootptr, 50);
+	insertdata(&rootptr, 20);
+	insertdata(&rootptr, 80);
+	insertdata(&rootptr, 10);
+	insertdata(&rootptr, 30);
+	insertdata(&rootptr, 60);
+	insertdata(&rootptr, 90);
+	printtree(rootptr,1,'*');
+	update(&rootptr,30,70); 
+	printtree(rootptr,1,'*');
+	erase(&rootptr, 60);
+	printtree(rootptr,1,'*');
+	erase(&rootptr, 50);
+	printtree(rootptr,1,'*');
+	printf("根数据:%d, 节点数:%d\n", getrootdata(rootptr), size(rootptr));
+	clear(&rootptr);
+	return 0;
+}
