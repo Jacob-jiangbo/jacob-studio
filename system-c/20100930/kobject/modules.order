@@ -1,0 +1,3 @@
+kernel//home/mafeng/kobject/kobject-example.ko
+kernel//home/mafeng/kobject/kset-example.ko
+kernel//home/mafeng/kobject/kobject-test.ko

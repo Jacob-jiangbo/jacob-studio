@@ -1,0 +1,1 @@
+cmd_/home/soft01/mafeng/20100906/1/hello.ko := ld -r -m elf_i386  --build-id -o /home/soft01/mafeng/20100906/1/hello.ko /home/soft01/mafeng/20100906/1/hello.o /home/soft01/mafeng/20100906/1/hello.mod.o

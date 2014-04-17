@@ -1,0 +1,1 @@
+cmd_/home/soft01/mafeng/20100907/2/chardrv/demo.ko := ld -m elf_i386 -m elf_i386 -r -o /home/soft01/mafeng/20100907/2/chardrv/demo.ko /home/soft01/mafeng/20100907/2/chardrv/demo.o /home/soft01/mafeng/20100907/2/chardrv/demo.mod.o

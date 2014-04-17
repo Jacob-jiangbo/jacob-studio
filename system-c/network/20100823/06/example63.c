@@ -1,0 +1,80 @@
+/* example63.c */
+#include	<sys/types.h>
+#include	<sys/socket.h>
+#include	<arpa/inet.h>
+#include	<stdio.h>
+#include	"stdlib.h"
+#include	<string.h>
+#define		BUFLEN	255
+int main(int argc, char **argv)
+{
+	struct sockaddr_in 	peeraddr, recvaddr, localaddr;
+	int			sockfd;
+	char 		recmsg[BUFLEN + 1];
+	int			socklen, n;
+	if (argc != 5) 
+	{
+		printf("%s <dest IP> <dest port> <source IP> <source port>\n", argv[0]);
+		exit(0);
+	}
+	sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+	if (sockfd < 0) 
+	{
+		fprintf(stderr, "socket creating error in udptalk.c!\n");
+		exit(0);
+	}
+	socklen = sizeof(struct sockaddr_in);
+	memset(&peeraddr, 0, socklen);
+	peeraddr.sin_family = AF_INET;
+	peeraddr.sin_port = htons(atoi(argv[2]));
+	if (inet_pton(AF_INET, argv[1], &peeraddr.sin_addr) <= 0) 
+	{
+		printf("Wrong dest IP address!\n");
+		exit(0);
+	}
+	memset(&localaddr, 0, socklen);
+	localaddr.sin_family = AF_INET;
+	if (inet_pton(AF_INET, argv[3], &localaddr.sin_addr) <= 0) 
+	{
+		printf("Wrong source IP address!\n");
+		exit(0);
+	}
+	localaddr.sin_port = htons(atoi(argv[4]));
+	if (bind(sockfd, &localaddr, socklen) < 0) 
+	{
+		fprintf(stderr, "bind local address error in udptalk.c!\n");
+		exit(0);
+	}
+	if (fgets(recmsg, BUFLEN, stdin) == NULL) 
+		exit(0);
+	if (sendto(sockfd, recmsg, strlen(recmsg), 0, &peeraddr, socklen) < 0) 
+	{
+		fprintf(stderr, "sendto error in udptalk.c!\n");
+		perror("");
+		exit(3);
+	}
+	for ( ; ; ) {
+		n = recvfrom(sockfd, recmsg, BUFLEN, 0, &recvaddr, &socklen);
+		if (n < 0) 
+		{
+			fprintf(stderr, "recvfrom error in udptalk.c!\n");
+			perror("");
+			exit(4);
+		}
+		else 
+		{
+			if (memcmp(&recvaddr, &peeraddr, socklen) != 0)
+				continue;
+			recmsg[n] = 0;
+			printf("peer:%s", recmsg);
+		}
+		if (fgets(recmsg, BUFLEN, stdin) == NULL)
+			exit(0);
+		if (sendto(sockfd, recmsg, strlen(recmsg), 0, &peeraddr, socklen) < 0) 
+		{
+			fprintf(stderr, "sendto error in udptalk.c!\n");
+			perror("");
+			exit(3);
+		}
+	}
+}

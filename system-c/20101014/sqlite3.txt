@@ -1,0 +1,61 @@
+基础使用：
+
+$sqlite3 ex1
+sqlite> create table tbl1(one varchar(10), two smallint);
+sqlite> insert into tbl1 values('hello!', 10);
+sqlite> insert into tbl1 values('goodbye', 20);
+sqlite> select * from tbl1;
+sqlite>
+
+sqlite> create table tbl2(
+   ...> f1 varchar(30) primary key,
+   ...> f2 text,
+   ...> f3 real
+   ...> );
+sqlite>
+
+
+sqlite命令:
+.mode 改变输出格式
+sqlite> .mode list
+sqlite> select * from tbl1;
+sqlite>
+
+.separator 改变分界符
+sqlite> .separator ", "
+sqlite> select * from tbl1;
+sqlite>
+
+line模式下，每一个位于条记录中的列在它自己那行显示。每行由列名、一个等号和列数据组成。
+sqlite> .mode line
+sqlite> select * from tbl1;
+sqlite>
+
+在column模式下，每条记录在一个单独的行中以数据列对齐的方式显示。
+sqlite> .mode column
+sqlite> select * from tbl1;
+sqlite> 
+
+在insert模式下，被子格式化为看起来像SQL INSERT语句的样式。
+sqlite> .mode insert new_table
+sqlite> select * from tbl1;
+
+html模式：
+sqlite>.mode html
+
+把结果写到文件中：
+sqlite> .output test_file_1.txt
+sqlite> select * from tbl1;
+sqlite> .exit
+$ cat test_file_1.txt
+hello|10
+goodbye|20
+
+查询数据库结构
+sqlite> .tables
+sqlite> .schema tbl2
+
+将整个数据库转换为ASCII文本文件
+$ echo '.dump' | sqlite3 ex1 > sql.txt
+$ cat sql.txt | sqlite3 ex2 
+
