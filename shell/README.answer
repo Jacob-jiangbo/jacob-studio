@@ -1,0 +1,9 @@
+1 sed '5d' file
+#sed -i '5d' file
+2 sed '/315/d' file
+3 sed 's/315/wjb/' file
+4 awk '/315/ {print $2}'
+5 sed -n '/315/,/^\[/p'
+6 find . -name "*.[h,c]" | xargs cat | wc -l
+7 find . -mmin + 60 -delete
+8 top -bn1 | grep '^top'

@@ -1,0 +1,12 @@
+Note: All of action refer to inter-atom.ini
+
+1 Delete the 5 line.
+2 Delete the line include '315'
+3 Replace the word of '315' to 'wjb'
+4 Print the other words in the line that include keyword
+5 Print special testcase for 315
+6 Count line in C project
+7 Delete file 60 mins ago
+8 Get CPU usage
+
+
