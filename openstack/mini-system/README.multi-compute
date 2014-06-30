@@ -1,0 +1,120 @@
+0. configure configuration files with auto_destroy enabled and auto_assign_ip disabled and specify the
+   IP addresses of the controller and the compute node as configured duringt he build
+
+e.g.
+[main]
+network: 192.168.7.1
+emulator: /usr/bin/qemu-system-x86_64
+auto_destroy: True
+auto_assign_ip: False
+
+[controller]
+kernel: $HOME/images/bzImage
+disk: $HOME/images/controller.ext3
+ip: 192.168.7.2
+
+[computeA]
+kernel: $HOME/images/bzImage
+disk: $HOME/images/compute.ext3
+ip: 192.168.7.4
+
+[computeB]
+kernel: $HOME/images/bzImage
+disk: $HOME/images/computeB.ext3
+ip: 192.168.7.6
+
+Start instances:
+<launch.py> <config file> start
+
+1. /etc/hosts - adjust for hostnames
+
+Configure your DNS or /etc/hosts and ensure it is consistent across
+all hosts. Make sure that the three hosts can perform name resolution
+with each other. As a test, use the ping command to ping each host from
+one another.
+
+$ ping HostA
+$ ping HostB
+$ ping HostC
+
+e.g.  /etc/hosts
+127.0.0.1       localhost.localdomain           localhost
+
+192.168.7.2 controller
+192.168.7.4 computeA
+192.168.7.6 computeB
+
+2. Fix libvirt types:
+
+If you are running open stack on multiple physical machines, then skip
+this step. If you are running OpenStack within a virtual machine,
+modify the configuration of nova on the compute machine and restart nova:
+
+root@compute:~# sed -i -e 's/libvirt_type = kvm/libvirt_type = qemu/' /etc/nova/nova.conf
+root@compute:~# service nova-compute restart
+
+
+3. Configure NFS host on controller
+
+/etc/nova/instances needs to be a shared directory for migration to work. 
+
+Configure the controller to export this as an NFS export.
+
+cat >> /etc/exports << 'EOF'
+/etc/nova/instances *(rw,no_subtree_check,insecure,no_root_squash)
+EOF
+exportfs -a
+
+On compute nodes:
+mount controller:/etc/nova/instances /etc/nova/instances/
+
+
+4. Make sure the controller can see the compute nodes
+
+nova service-list
+        
+root@controller:/etc/nova/instances# nova service-list
++------------------+------------+----------+---------+-------+----------------------------+-----------------+
+| Binary           | Host       | Zone     | Status  | State | Updated_at                 | Disabled Reason |
++------------------+------------+----------+---------+-------+----------------------------+-----------------+
+| nova-compute     | computeA   | nova     | enabled | up    | 2014-05-16T17:14:24.617143 | -               |
+| nova-compute     | computeB   | nova     | enabled | up    | 2014-05-16T17:14:25.228089 | -               |
+| nova-conductor   | controller | internal | enabled | up    | 2014-05-16T17:14:26.932751 | -               |
+| nova-scheduler   | controller | internal | enabled | up    | 2014-05-16T17:14:26.984656 | -               |
+| nova-consoleauth | controller | internal | enabled | up    | 2014-05-16T17:14:27.007947 | -               |
+| nova-cert        | controller | internal | enabled | up    | 2014-05-16T17:14:27.030701 | -               |
+| nova-network     | controller | internal | enabled | up    | 2014-05-16T17:14:27.031366 | -               |
++------------------+------------+----------+---------+-------+----------------------------+-----------------+
+
+root@controller:~# nova hypervisor-list
++----+---------------------+
+| ID | Hypervisor hostname |
++----+---------------------+
+| 1  | computeA            |
+| 2  | computeB            |
++----+---------------------+
+
+Login to horizon, and select hypervisors, both nodes will be seen
+
+
+5. Bootup a guest from the controller:
+
+On controller:
+glance image-create --name myFirstImage --is-public true --container-format bare --disk-format qcow2 --file images/cirros-0.3.0-x86_64-disk.img 
+neutron  net-create mynetwork
+nova boot --image myFirstImage --flavor 1 myinstance
+
+6. Do migration from horizon
+
+>From horizon, goto instances, myinstance should be running
+wait til myinstance is in running state
+
+In Actions, select: Migrate Instance
+Select: Confirm migrate/resize when promted
+
+myinstance is now running from the other compute node (computeB in this case)
+
+Note: Config nat and allow internet access internal virtual device.
+iptables -t nat -I PREROUTING -d 128.224.167.163 -p tcp --dport 8080 -j DNAT --to 192.168.122.2:8080
+iptables -I FORWARD -d 192.168.122.2 -p tcp --dport 8080 -j ACCEPT
+
