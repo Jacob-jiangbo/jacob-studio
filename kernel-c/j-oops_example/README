@@ -1,0 +1,6 @@
+Knowledge:
+- If oops in interruption , it is panic
+- others are oops 
+
+if set /proc/sys/kernel/panic_on_oops , all oops are panic
+
