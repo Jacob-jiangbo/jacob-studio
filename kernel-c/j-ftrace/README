@@ -1,0 +1,6 @@
+Full ftrace log need some config to be opened.
+
+# ./function.sh cat /proc/test_dir/test_rw
+# cat /sys/kernel/debug/tracing/trace > 1
+# vim -S .fungraph-vim 1  <--z,a could be used to fold/unfold
+

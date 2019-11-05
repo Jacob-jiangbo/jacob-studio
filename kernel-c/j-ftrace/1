@@ -1,0 +1,19 @@
+# tracer: function_graph
+#
+# CPU  DURATION                  FUNCTION CALLS
+# |     |   |                     |   |   |   |
+ 0)               |  test_proc_show [proc]() {
+ 0)               |    kill_time [proc]() {
+ 0)               |      __delay() {
+ 0)   0.380 us    |        arch_timer_evtstrm_available();
+ 0) # 2000.300 us |      }
+ 0)               |      kill_moretime [proc]() {
+ 0)               |        __delay() {
+ 0)   0.060 us    |          arch_timer_evtstrm_available();
+ 0) # 2000.160 us |        }
+ 0) # 2001.200 us |      }
+ 0) # 4004.040 us |    }
+ 0)               |    seq_printf() {
+ 0)   1.220 us    |      seq_vprintf();
+ 0)   2.080 us    |    }
+ 0) # 4008.500 us |  }
