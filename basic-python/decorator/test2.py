@@ -14,7 +14,7 @@ def f2(arg = ""):
 
 print ("start")
 print f2
-# print f2("3")  <--- Won't have error
+# print f2("3")  <--- Would have error
 
 """
 output is :
