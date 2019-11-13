@@ -27,3 +27,9 @@ Finished decorating aFunction()
 inside myDecorator.__call__()
 inside aFunction()
 
+Very useful case:
+likes:
+@retries(3) 
+
+https://wiki.python.org/moin/PythonDecoratorLibrary - central repository of decorator
+

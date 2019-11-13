@@ -16,10 +16,11 @@ print f1(f2)
 
 """
 Output likes:
+start
 f1
 f3
 f2r
-start
 f2rf1
+
 """
 
