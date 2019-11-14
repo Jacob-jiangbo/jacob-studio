@@ -152,3 +152,6 @@ syntax on
 
     " replace string
     nmap <C-\>r :%s/ostr/nstr/g
+
+"Paste toggle - when pasting something in, don't indent.
+set pastetoggle=<F3>
