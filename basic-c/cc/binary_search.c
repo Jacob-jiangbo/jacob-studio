@@ -20,6 +20,31 @@ void sort(int a[], int n)
         }while(swap > 0);
 } 
 
+// More official qsearch , it could check if this num not in  array
+int qsearch(int *a, int num, int cnt)
+{
+    int i = 0;
+    int j = cnt - 1;
+    int mid;
+
+    while(i<=j)
+    {
+        mid = (i+j)/2;
+	if( num == a[mid] )
+	{
+	    return mid;
+	    break;
+	}    
+        else if(num > a[mid])
+	    i = mid + 1;
+	else
+	    j = mid -1;
+    }	    
+
+    if(i>j) return 0;
+
+}	
+
 
 int binary_search(int s[], int x, int low, int high)
 {
